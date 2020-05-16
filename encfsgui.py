@@ -12,6 +12,8 @@ from gi.repository import Gtk  # @UnresolvedImport
 
 from os.path import expanduser
 
+from widgetHandlers.messageArea import messageArea
+
 
 class encfsgui(object):
   configFile = "./conf/encfsgui.yaml"
@@ -47,11 +49,8 @@ class encfsgui(object):
     Gtk.main_quit()
     return True
   
-  def resetMessageArea(self):
-    self.messageArea.set_text("");
-  
   def on_cargoList_row_activated(self, widget, data=None, moreData=None ):
-    self.resetMessageArea()
+    self.messageArea.addInProgress("Changing state of "+self.getSelectedName())
     logging.debug("double click! on %s", self.getSelectedName())
     self.checkCargoState()
     if (self.activeMount.has_key(self.getSelectedName())):
@@ -60,7 +59,7 @@ class encfsgui(object):
       self.connectCargo_clicked_cb(None, None)
     
   def newCargo_clicked_cb(self, widget, data=None):
-    self.resetMessageArea()
+    self.messageArea.addInProgress("Defining new Cargo")
     self.newName.set_text("")
     # Poner $HOME
     self.newSecretCargoDir.set_filename(expanduser("~"))
@@ -68,23 +67,23 @@ class encfsgui(object):
     self.newCargoWindow.show_all()
         
   def deleteCargo_clicked_cb(self, widget, data=None):
-    self.resetMessageArea()
+    self.messageArea.addInProgress("Deleting Cargo "+self.getSelectedName())
     self.checkCargoState()
     if self.getSelectedName() in self.activeMount:
       logging.debug("Can not delete connected cargo!!")
-      self.messageArea.set_text("Can not delete connected cargo!");
+      self.messageArea.addError("Can not delete connected cargo! "+self.getSelectedName());
     else:
       self.deleteCargoDialog.show_all()
         
   def editCargo_clicked_cb(self, widget, data=None):
-    self.resetMessageArea()
+    self.messageArea.addInProgress("Editing Cargo "+self.getSelectedName())
     self.checkCargoState()
     logging.debug(self.getSelectedName())
     logging.debug(self.getSelectedOrigin())
     logging.debug(self.getSelectedMount())
     if self.getSelectedName() in self.activeMount:
       logging.debug("Can not edit connected cargo!!")
-      self.messageArea.set_text("Can not edit connected cargo!!")
+      self.messageArea.addError("Can not edit connected cargo!! "+self.getSelectedName())
     else:
       self.editName.set_text(self.getSelectedName())
       self.editSecretCargoDir.set_filename(self.getSelectedOrigin())
@@ -93,22 +92,22 @@ class encfsgui(object):
     logging.debug("edit cliked!")
 
   def connectCargo_clicked_cb(self, widget, data=None):
-    self.resetMessageArea()
+    self.messageArea.addInProgress("Connencting Cargo "+self.getSelectedName())
     self.checkCargoState()
     if self.getSelectedName() in self.activeMount:
       logging.debug("Already connected!!!")
-      self.messageArea.set_text("Already connected!!!")      
+      self.messageArea.addError("Already connected!!! "+self.getSelectedName())      
     else:
       self.passwdDialogText.set_text("")
       self.passwdDialog.show_all()        
     logging.debug("connect cliked! on %s", self.getSelectedName())
     
   def disconnectCargo_clicked_cb(self, widget, data=None):
-    self.resetMessageArea()
+    self.messageArea.addInProgress("Disconnecting Cargo "+self.getSelectedName())
     self.checkCargoState()
     if not self.getSelectedName() in self.activeMount:
       logging.debug("Not connected!!! %s", self.getSelectedMount())
-      self.messageArea.set_text("Not connected!!! "+ self.getSelectedMount())
+      self.messageArea.addError("Not connected!!! "+ self.getSelectedName())
     else:
       with open(os.devnull, 'w') as FNULL:
         cmd="fusermount"
@@ -116,10 +115,11 @@ class encfsgui(object):
         logging.debug("%s disconnected with code %s", self.getSelectedMount(), retCode)
     logging.debug("disconnect clicked!")
     self.checkCargoState()
+    self.messageArea.addOK("Disconnected Cargo "+self.getSelectedName())
     
 
   def on_cargoList_row_selected(self, widget, data=None):
-    self.resetMessageArea()
+    self.messageArea.addInProgress("Row Selected "+self.getSelectedName())
     self.checkCargoState()
     logging.debug("list selected!")
     
@@ -139,7 +139,8 @@ class encfsgui(object):
           stdin=echoOut.stdout).communicate()
     echoOut.stdout.close()
     self.checkCargoState()
-    self.passwdDialogText.set_text("")    
+    self.passwdDialogText.set_text("")
+    self.messageArea.addOK("Cargo mounted! "+self.getSelectedName())    
 
     
   def addNew_clicked_cb(self, widget, data=None):
@@ -148,6 +149,7 @@ class encfsgui(object):
     self.model.append(["notChecked", self.newName.get_text() , self.newSecretCargoDir.get_filename(), self.newMountPointDir.get_filename()])
     self.saveConfig()
     self.checkCargoState()
+    self.messageArea.addOK("New cargo created! "+self.newName.get_text())
 
   def confirmEdit_clicked_cb(self, widget, data=None):
     logging.debug("Name [%s] SCD[%s] MPD[%s]", self.editName.get_text(), self.editSecretCargoDir.get_filename(), self.editMountPointDir.get_filename())
@@ -155,24 +157,30 @@ class encfsgui(object):
     self.doDelete()
     self.model.append(["notChecked", self.editName.get_text() , self.editSecretCargoDir.get_filename(), self.editMountPointDir.get_filename()])
     self.saveConfig()
+    self.messageArea.addOK("Edit cargo done! "+self.editName.get_text())
+
     
   def cancelEdit_clicked_cb(self, widget, data=None):
     logging.debug("cancelEditPressed")
     self.editCargoWindow.hide()  
+    self.messageArea.addOK("Edit Cargo canceled")
     
   def cancelNew_clicked_cb(self, widget, data=None):
     logging.debug("cancelNewPressed")
     self.newCargoWindow.hide()    
+    self.messageArea.addOK("Cargo Creation canceled")
 
   def deleteCancel_clicked_cb(self, widget, data=None):
     logging.debug("canceledPressed")
     self.deleteCargoDialog.hide()
+    self.messageArea.addOK("Delete Cargo canceled")    
 
   def deleteConfirm_clicked_cb(self, widget, data=None):
     logging.debug("deletePressed")
     self.deleteCargoDialog.hide()
     self.doDelete()    
-    logging.debug("delete cliked!")        
+    logging.debug("delete cliked!")
+    self.messageArea.addOK("Delete Cargo confirmed")    
 
   def doDelete(self):
     # Get the TreeView selected row(s)
@@ -291,10 +299,11 @@ class encfsgui(object):
     self.editName = builder.get_object("editCargoName")              
     self.editSecretCargoDir = builder.get_object("editSecretCargoDir")              
     self.editMountPointDir = builder.get_object("editMountPointDir")
-    self.messageArea=builder.get_object("messageArea");
+    self.messageArea = messageArea(builder)
 
     self.loadConfig()
     self.window.show_all()
+    self.messageArea.addOK("Launched")
     
 
 if __name__ == "__main__":
