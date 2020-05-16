@@ -13,16 +13,6 @@
       <!-- column-name mountPoint -->
       <column type="gchararray"/>
     </columns>
-    <data>
-      <!--
-      <row>
-        <col id="0" translatable="yes">notChecked</col>
-        <col id="1">fakeName</col>
-        <col id="2">fakeOrigin</col>
-        <col id="3">fakeMount</col>
-      </row>
-        -->
-    </data>
   </object>
   <object class="GtkWindow" id="window">
     <property name="can_focus">False</property>
@@ -191,6 +181,7 @@
             <property name="vscroll_policy">natural</property>
             <property name="model">cargoModel</property>
             <property name="enable_grid_lines">horizontal</property>
+            <signal name="row-activated" handler="on_cargoList_row_activated" swapped="no"/>
             <child internal-child="selection">
               <object class="GtkTreeSelection"/>
             </child>
@@ -252,6 +243,23 @@
           </object>
           <packing>
             <property name="expand">True</property>
+            <property name="fill">True</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkLabel" id="messageArea">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="wrap">True</property>
+            <property name="selectable">True</property>
+            <attributes>
+              <attribute name="weight" value="bold"/>
+              <attribute name="foreground" value="#cccc00000000"/>
+            </attributes>
+          </object>
+          <packing>
+            <property name="expand">False</property>
             <property name="fill">True</property>
             <property name="position">2</property>
           </packing>

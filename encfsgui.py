@@ -46,8 +46,21 @@ class encfsgui(object):
   def on_window_destroy(self, widget, data=None):
     Gtk.main_quit()
     return True
+  
+  def resetMessageArea(self):
+    self.messageArea.set_text("");
+  
+  def on_cargoList_row_activated(self, widget, data=None, moreData=None ):
+    self.resetMessageArea()
+    logging.debug("double click! on %s", self.getSelectedName())
+    self.checkCargoState()
+    if (self.activeMount.has_key(self.getSelectedName())):
+      self.disconnectCargo_clicked_cb(None, None)
+    else:
+      self.connectCargo_clicked_cb(None, None)
     
   def newCargo_clicked_cb(self, widget, data=None):
+    self.resetMessageArea()
     self.newName.set_text("")
     # Poner $HOME
     self.newSecretCargoDir.set_filename(expanduser("~"))
@@ -55,19 +68,23 @@ class encfsgui(object):
     self.newCargoWindow.show_all()
         
   def deleteCargo_clicked_cb(self, widget, data=None):
+    self.resetMessageArea()
     self.checkCargoState()
     if self.getSelectedName() in self.activeMount:
       logging.debug("Can not delete connected cargo!!")
+      self.messageArea.set_text("Can not delete connected cargo!");
     else:
       self.deleteCargoDialog.show_all()
         
   def editCargo_clicked_cb(self, widget, data=None):
+    self.resetMessageArea()
     self.checkCargoState()
     logging.debug(self.getSelectedName())
     logging.debug(self.getSelectedOrigin())
     logging.debug(self.getSelectedMount())
     if self.getSelectedName() in self.activeMount:
       logging.debug("Can not edit connected cargo!!")
+      self.messageArea.set_text("Can not edit connected cargo!!")
     else:
       self.editName.set_text(self.getSelectedName())
       self.editSecretCargoDir.set_filename(self.getSelectedOrigin())
@@ -76,18 +93,22 @@ class encfsgui(object):
     logging.debug("edit cliked!")
 
   def connectCargo_clicked_cb(self, widget, data=None):
+    self.resetMessageArea()
     self.checkCargoState()
     if self.getSelectedName() in self.activeMount:
       logging.debug("Already connected!!!")
+      self.messageArea.set_text("Already connected!!!")      
     else:
       self.passwdDialogText.set_text("")
       self.passwdDialog.show_all()        
     logging.debug("connect cliked! on %s", self.getSelectedName())
     
   def disconnectCargo_clicked_cb(self, widget, data=None):
+    self.resetMessageArea()
     self.checkCargoState()
     if not self.getSelectedName() in self.activeMount:
       logging.debug("Not connected!!! %s", self.getSelectedMount())
+      self.messageArea.set_text("Not connected!!! "+ self.getSelectedMount())
     else:
       with open(os.devnull, 'w') as FNULL:
         cmd="fusermount"
@@ -98,6 +119,7 @@ class encfsgui(object):
     
 
   def on_cargoList_row_selected(self, widget, data=None):
+    self.resetMessageArea()
     self.checkCargoState()
     logging.debug("list selected!")
     
@@ -269,6 +291,7 @@ class encfsgui(object):
     self.editName = builder.get_object("editCargoName")              
     self.editSecretCargoDir = builder.get_object("editSecretCargoDir")              
     self.editMountPointDir = builder.get_object("editMountPointDir")
+    self.messageArea=builder.get_object("messageArea");
 
     self.loadConfig()
     self.window.show_all()
