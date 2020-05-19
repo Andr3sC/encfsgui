@@ -1,9 +1,23 @@
 #!/usr/bin/env python
+# encoding: utf-8
+'''
+encfsgui -- GUI for mounting and unmounting encfs directories aka Cargo in this program
+
+This program is graphical frontend for encfs directories os Cargos
+
+@author:     Andrés Caner
+
+@copyright:  2020 Personal. All rights reserved.
+
+@license:    Apache License 2.0
+
+@contact:    bugarnir@gmail.com
+@deffield    updated: __date__
+'''
 
 import yaml
 import subprocess
 import re
-import os
 import logging
 
 import gi
@@ -13,10 +27,19 @@ from gi.repository import Gtk  # @UnresolvedImport
 from os.path import expanduser
 
 from widgetHandlers.messageArea import messageArea
+import sys
+import os
+
+from argparse import ArgumentParser
+from argparse import RawDescriptionHelpFormatter
+
+__all__ = []
+__version__ = 0.1
+__date__ = '2020-05-17'
+__updated__ = '2020-05-17'
 
 
 class encfsgui(object):
-  configFile = "./conf/encfsgui.yaml"
 
   def getSelectedName(self):
     return self.getSelectedColumn(1)
@@ -140,8 +163,10 @@ class encfsgui(object):
     echoOut.stdout.close()
     self.checkCargoState()
     self.passwdDialogText.set_text("")
-    self.messageArea.addOK("Cargo mounted! "+self.getSelectedName())    
-
+    if ( self.activeMount.has_key(self.getSelectedName())):
+      self.messageArea.addOK("Cargo mounted! "+self.getSelectedName())
+    else:    
+      self.messageArea.addError("Cannot mount! "+self.getSelectedName())
     
   def addNew_clicked_cb(self, widget, data=None):
     logging.debug("Name [%s] SCD[%s] MPD[%s]", self.newName.get_text(), self.newSecretCargoDir.get_filename(), self.newMountPointDir.get_filename())
@@ -211,7 +236,7 @@ class encfsgui(object):
     boton.set_sensitive(True)
 
   def saveConfig(self):
-    with open(encfsgui.configFile, "w") as yamlFile:
+    with open(encfsgui.cargoFile, "w") as yamlFile:
       dictFile = dict()      
       for row in self.model:
         dictRow = dict()
@@ -221,7 +246,7 @@ class encfsgui(object):
       yaml.dump(dictFile, yamlFile)
       
   def loadConfig(self):
-    with open(encfsgui.configFile, "r") as yamlFile:
+    with open(self.cargoFile, "r") as yamlFile:
       cfg = yaml.load(yamlFile, Loader=yaml.FullLoader)
       for key, value in cfg.items():
         self.model.append(["notChecked", key, value["secret"], value["clear"]])
@@ -275,11 +300,13 @@ class encfsgui(object):
           if self.activeMount.has_key(row[1]):
             self.activeMount.pop(row[1])
 
-  def __init__(self):    
+  def __init__(self, cargoFile, gladeFile):
+    self.cargoFile =cargoFile
+    
     self.activeMount = dict()
     self.readyCargos = dict()
     builder = Gtk.Builder()
-    builder.add_from_file("encfsgui.glade")
+    builder.add_from_file(gladeFile)
     builder.connect_signals(self)
     
     self.activateButtons(builder)
@@ -307,6 +334,58 @@ class encfsgui(object):
     
 
 if __name__ == "__main__":
+  '''Command line options.'''
+
+  program_name = os.path.basename(sys.argv[0])
+  program_version = "v%s" % __version__
+  program_build_date = str(__updated__)
+  program_version_message = '%%(prog)s %s (%s)' % (program_version, program_build_date)
+  program_shortdesc = __import__('__main__').__doc__.split("\n")[1]
+  program_license = '''%s
+  
+  Created by Andrés Cancer on %s.
+  Copyright 2020 Personal. All rights reserved.
+  
+  Licensed under the Apache License 2.0
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Distributed on an "AS IS" basis without warranties
+  or conditions of any kind, either express or implied.
+
+  USAGE
+  ''' % (program_shortdesc, str(__date__))
+  defaultCargoFile="~/.config/.encfsgui/encfsgui.yaml"
+  defaultGladeFile="/usr/share/encfsgui/encfsgui.glade"
+   
+  # Setup argument parser
+  parser = ArgumentParser(description=program_license,
+                            formatter_class=RawDescriptionHelpFormatter,
+                            epilog=program_version_message)
+  parser.add_argument("-d",
+                        "--debug",
+                        default=False,
+                        dest="debug",
+                        action="store_true", 
+                        help="Activate Debug [default: %(default)s]")
+                              
+  parser.add_argument("-c",
+                        "--cargoFile",
+                        default=defaultCargoFile,
+                        dest="cargoFile",
+                        action="store", 
+                        help="location of the file that contains the cargos to be managed [default: %(default)s]")
+  parser.add_argument("-g",
+                          "--gladeFile",
+                          default=defaultGladeFile,
+                          dest="gladeFile", 
+                          action="store",
+                          help="location of the graphical layout file (glade based) [default: %(default)s]")
+  
+  # Process arguments
+  args = parser.parse_args()
+  cargoFile = args.cargoFile
+  gladeFile = args.gladeFile
+  debug = args.debug  
   FORMAT = '%(asctime)-15s -12s %(levelname)-8s %(message)s'
   formatter = logging.Formatter(FORMAT)
   
@@ -315,7 +394,9 @@ if __name__ == "__main__":
   
   logger = logging.getLogger()  
   logger.addHandler(handler)
-  logger.setLevel(logging.DEBUG)  
+  logger.setLevel(logging.CRITICAL)
+  if ( debug ):
+    logger.setLevel(logging.DEBUG)  
 
-  app = encfsgui()
+  app = encfsgui(cargoFile,gladeFile)
   Gtk.main()
