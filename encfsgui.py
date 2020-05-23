@@ -34,7 +34,8 @@ from argparse import ArgumentParser
 from argparse import RawDescriptionHelpFormatter
 
 import gettext
-from gettext import gettext as _
+#not needed it will be redifined
+#from gettext import gettext as _
 
 __all__ = []
 __version__ = 0.1
@@ -408,9 +409,15 @@ if __name__ == "__main__":
   cargoFile = args.cargoFile
   configDir = args.configDir
   dirLocale = configDir+"/locales"
-  myLang = gettext.translation('messages', localedir=dirLocale)#, languages=['es'])
-  myLang.install()
-  _=myLang.gettext
+  try:
+    myLang = gettext.translation('messages', localedir=dirLocale)#, languages=['es'])
+    myLang.install()
+    _=myLang.gettext
+  except:
+    myLang = gettext.translation('messages', localedir=dirLocale, languages=['en'])
+    myLang.install()
+    _=myLang.gettext    
+  
   gladeFile = configDir+encfsgui.GLADEFILENAME;
   debug = args.debug  
   FORMAT = '%(asctime)-15s -12s %(levelname)-8s %(message)s'
