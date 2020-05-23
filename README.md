@@ -7,3 +7,5 @@ Mount points are defined as Cargos, you can define/mount/umount/delte/edit mount
 
 It is functional though some more work is expected.
 
+I18N included, messages files must be compiled on install
+
