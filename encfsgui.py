@@ -33,6 +33,9 @@ import os
 from argparse import ArgumentParser
 from argparse import RawDescriptionHelpFormatter
 
+#import gettext
+from gettext import gettext as _
+
 __all__ = []
 __version__ = 0.1
 __date__ = '2020-05-17'
@@ -40,6 +43,12 @@ __updated__ = '2020-05-17'
 
 
 class encfsgui(object):
+  
+  ICON_NOT_READY = "document-new"
+  ICON_CHECKING_PENDING = "help-faq"
+  ICON_MOUNTED = "network-wired"
+  ICON_NOT_MOUNTED = "network-offline"
+  GLADEFILENAME="/encfsgui.glade"  
 
   def getSelectedName(self):
     return self.getSelectedColumn(1)
@@ -73,7 +82,7 @@ class encfsgui(object):
     return True
   
   def on_cargoList_row_activated(self, widget, data=None, moreData=None ):
-    self.messageArea.addInProgress("Changing state of "+self.getSelectedName())
+    self.messageArea.addInProgress(_("Changing state of {}").format(self.getSelectedName()))
     logging.debug("double click! on %s", self.getSelectedName())
     self.checkCargoState()
     if (self.activeMount.has_key(self.getSelectedName())):
@@ -82,7 +91,7 @@ class encfsgui(object):
       self.connectCargo_clicked_cb(None, None)
     
   def newCargo_clicked_cb(self, widget, data=None):
-    self.messageArea.addInProgress("Defining new Cargo")
+    self.messageArea.addInProgress(_("Defining new Cargo"))
     self.newName.set_text("")
     # Poner $HOME
     self.newSecretCargoDir.set_filename(expanduser("~"))
@@ -90,23 +99,23 @@ class encfsgui(object):
     self.newCargoWindow.show_all()
         
   def deleteCargo_clicked_cb(self, widget, data=None):
-    self.messageArea.addInProgress("Deleting Cargo "+self.getSelectedName())
+    self.messageArea.addInProgress(_("Deleting Cargo {}").format(self.getSelectedName()))
     self.checkCargoState()
     if self.getSelectedName() in self.activeMount:
       logging.debug("Can not delete connected cargo!!")
-      self.messageArea.addError("Can not delete connected cargo! "+self.getSelectedName());
+      self.messageArea.addError(_("Can not delete connected cargo! {}").format(self.getSelectedName()));
     else:
       self.deleteCargoDialog.show_all()
         
   def editCargo_clicked_cb(self, widget, data=None):
-    self.messageArea.addInProgress("Editing Cargo "+self.getSelectedName())
+    self.messageArea.addInProgress(_("Editing Cargo {}").format(self.getSelectedName()))
     self.checkCargoState()
     logging.debug(self.getSelectedName())
     logging.debug(self.getSelectedOrigin())
     logging.debug(self.getSelectedMount())
     if self.getSelectedName() in self.activeMount:
       logging.debug("Can not edit connected cargo!!")
-      self.messageArea.addError("Can not edit connected cargo!! "+self.getSelectedName())
+      self.messageArea.addError(_("Can not edit connected cargo!! {}").format(self.getSelectedName()))
     else:
       self.editName.set_text(self.getSelectedName())
       self.editSecretCargoDir.set_filename(self.getSelectedOrigin())
@@ -115,22 +124,22 @@ class encfsgui(object):
     logging.debug("edit cliked!")
 
   def connectCargo_clicked_cb(self, widget, data=None):
-    self.messageArea.addInProgress("Connencting Cargo "+self.getSelectedName())
+    self.messageArea.addInProgress(_("Connencting Cargo {}").format(self.getSelectedName()))
     self.checkCargoState()
     if self.getSelectedName() in self.activeMount:
       logging.debug("Already connected!!!")
-      self.messageArea.addError("Already connected!!! "+self.getSelectedName())      
+      self.messageArea.addError(_("Already connected!!! {}").format(self.getSelectedName()))      
     else:
       self.passwdDialogText.set_text("")
       self.passwdDialog.show_all()        
     logging.debug("connect cliked! on %s", self.getSelectedName())
     
   def disconnectCargo_clicked_cb(self, widget, data=None):
-    self.messageArea.addInProgress("Disconnecting Cargo "+self.getSelectedName())
+    self.messageArea.addInProgress(_("Disconnecting Cargo {}").format(self.getSelectedName()))
     self.checkCargoState()
     if not self.getSelectedName() in self.activeMount:
       logging.debug("Not connected!!! %s", self.getSelectedMount())
-      self.messageArea.addError("Not connected!!! "+ self.getSelectedName())
+      self.messageArea.addError(_("Not connected!!! {}").format(self.getSelectedName()))
     else:
       with open(os.devnull, 'w') as FNULL:
         cmd="fusermount"
@@ -138,11 +147,11 @@ class encfsgui(object):
         logging.debug("%s disconnected with code %s", self.getSelectedMount(), retCode)
     logging.debug("disconnect clicked!")
     self.checkCargoState()
-    self.messageArea.addOK("Disconnected Cargo "+self.getSelectedName())
+    self.messageArea.addOK(_("Disconnected Cargo {}").format(self.getSelectedName()))
     
 
   def on_cargoList_row_selected(self, widget, data=None):
-    self.messageArea.addInProgress("Row Selected "+self.getSelectedName())
+    self.messageArea.addInProgress(_("Row Selected ").format(self.getSelectedName()))
     self.checkCargoState()
     logging.debug("list selected!")
     
@@ -157,55 +166,57 @@ class encfsgui(object):
     if (not self.readyCargos.has_key(self.getSelectedName())):
       encfsCmd.append("--paranoia")
     encfsCmd.append(os.path.realpath(self.getSelectedOrigin()))
-    encfsCmd.append(os.path.realpath(self.getSelectedMount()))
-    subprocess.Popen(encfsCmd,            
-          stdin=echoOut.stdout).communicate()
+    encfsCmd.append(os.path.realpath(self.getSelectedMount()))   
+    encfsOut, encfsErr = subprocess.Popen(encfsCmd,            
+          stdin=echoOut.stdout,stderr=subprocess.PIPE).communicate()
+    logging.debug("Enfcs Output {}".format(encfsOut))
+    logging.debug("Enfcs ErrorOut {}".format(encfsErr))
     echoOut.stdout.close()
     self.checkCargoState()
     self.passwdDialogText.set_text("")
     if ( self.activeMount.has_key(self.getSelectedName())):
-      self.messageArea.addOK("Cargo mounted! "+self.getSelectedName())
+      self.messageArea.addOK(_("Cargo mounted! {}").format(self.getSelectedName()))
     else:    
-      self.messageArea.addError("Cannot mount! "+self.getSelectedName())
+      self.messageArea.addError(_("Cannot mount! {}").format(self.getSelectedName()))
     
   def addNew_clicked_cb(self, widget, data=None):
     logging.debug("Name [%s] SCD[%s] MPD[%s]", self.newName.get_text(), self.newSecretCargoDir.get_filename(), self.newMountPointDir.get_filename())
     self.newCargoWindow.hide()
-    self.model.append(["notChecked", self.newName.get_text() , self.newSecretCargoDir.get_filename(), self.newMountPointDir.get_filename()])
+    self.model.append([_("notChecked"), self.newName.get_text() , self.newSecretCargoDir.get_filename(), self.newMountPointDir.get_filename(), encfsgui.ICON_CHECKING_PENDING])
     self.saveConfig()
     self.checkCargoState()
-    self.messageArea.addOK("New cargo created! "+self.newName.get_text())
+    self.messageArea.addOK(_("New cargo created! {}").format(self.newName.get_text()))
 
   def confirmEdit_clicked_cb(self, widget, data=None):
     logging.debug("Name [%s] SCD[%s] MPD[%s]", self.editName.get_text(), self.editSecretCargoDir.get_filename(), self.editMountPointDir.get_filename())
     self.editCargoWindow.hide()
     self.doDelete()
-    self.model.append(["notChecked", self.editName.get_text() , self.editSecretCargoDir.get_filename(), self.editMountPointDir.get_filename()])
+    self.model.append([_("notChecked"), self.editName.get_text() , self.editSecretCargoDir.get_filename(), self.editMountPointDir.get_filename(), encfsgui.ICON_CHECKING_PENDING])
     self.saveConfig()
-    self.messageArea.addOK("Edit cargo done! "+self.editName.get_text())
+    self.messageArea.addOK(_("Edit cargo done! {}").format(self.editName.get_text()))
 
     
   def cancelEdit_clicked_cb(self, widget, data=None):
     logging.debug("cancelEditPressed")
     self.editCargoWindow.hide()  
-    self.messageArea.addOK("Edit Cargo canceled")
+    self.messageArea.addOK(_("Edit Cargo canceled"))
     
   def cancelNew_clicked_cb(self, widget, data=None):
     logging.debug("cancelNewPressed")
     self.newCargoWindow.hide()    
-    self.messageArea.addOK("Cargo Creation canceled")
+    self.messageArea.addOK(_("Cargo Creation canceled"))
 
   def deleteCancel_clicked_cb(self, widget, data=None):
     logging.debug("canceledPressed")
     self.deleteCargoDialog.hide()
-    self.messageArea.addOK("Delete Cargo canceled")    
+    self.messageArea.addOK(_("Delete Cargo canceled"))    
 
   def deleteConfirm_clicked_cb(self, widget, data=None):
     logging.debug("deletePressed")
     self.deleteCargoDialog.hide()
     self.doDelete()    
     logging.debug("delete cliked!")
-    self.messageArea.addOK("Delete Cargo confirmed")    
+    self.messageArea.addOK(_("Delete Cargo confirmed"))    
 
   def doDelete(self):
     # Get the TreeView selected row(s)
@@ -236,7 +247,7 @@ class encfsgui(object):
     boton.set_sensitive(True)
 
   def saveConfig(self):
-    with open(encfsgui.cargoFile, "w") as yamlFile:
+    with open(self.cargoFile, "w") as yamlFile:
       dictFile = dict()      
       for row in self.model:
         dictRow = dict()
@@ -249,7 +260,7 @@ class encfsgui(object):
     with open(self.cargoFile, "r") as yamlFile:
       cfg = yaml.load(yamlFile, Loader=yaml.FullLoader)
       for key, value in cfg.items():
-        self.model.append(["notChecked", key, value["secret"], value["clear"]])
+        self.model.append([_("notChecked"), key, value["secret"], value["clear"], encfsgui.ICON_CHECKING_PENDING ])
     self.checkCargoState()
   
   def checkCargoIsReady(self, origin2Check):
@@ -283,19 +294,22 @@ class encfsgui(object):
                    
       if alreadyMounted:
         logging.debug("%s mounted", row[3])
-        row[0] = "mounted"
+        row[0] = _("mounted")
+        row[4] = encfsgui.ICON_MOUNTED
         self.activeMount[row[1]] = "on"
         self.readyCargos[row[1]] = "ready"
       else:
         logging.debug("%s NOT mounted", row[3])
         if self.checkCargoIsReady(os.path.realpath(row[2])):
-          row[0] = "notReady"
+          row[0] = _("notReady")
+          row[4] = encfsgui.ICON_NOT_READY
           if self.readyCargos.has_key(row[1]):
             self.readyCargos.pop(row[1])
           if self.activeMount.has_key(row[1]):
             self.activeMount.pop(row[1])                      
         else:
-          row[0] = "unmounted"
+          row[0] = _("unmounted")
+          row[4] = encfsgui.ICON_NOT_MOUNTED
           self.readyCargos[row[1]] = "ready"
           if self.activeMount.has_key(row[1]):
             self.activeMount.pop(row[1])
@@ -311,6 +325,13 @@ class encfsgui(object):
     
     self.activateButtons(builder)
     self.cargoList = builder.get_object("cargoList")
+    
+    renderer_pixbuf = Gtk.CellRendererPixbuf()
+    column_pixbuf = Gtk.TreeViewColumn("status", renderer_pixbuf, icon_name=4)
+    self.cargoList.remove_column(self.cargoList.get_column(4))
+    self.cargoList.append_column(column_pixbuf)
+    
+    
     self.cargoList.set_visible(True)    
     self.model = self.cargoList.get_model()
     self.window = builder.get_object("window")
@@ -330,7 +351,7 @@ class encfsgui(object):
 
     self.loadConfig()
     self.window.show_all()
-    self.messageArea.addOK("Launched")
+    self.messageArea.addOK(_("Launched"))
     
 
 if __name__ == "__main__":
@@ -355,7 +376,8 @@ if __name__ == "__main__":
   USAGE
   ''' % (program_shortdesc, str(__date__))
   defaultCargoFile="~/.config/.encfsgui/encfsgui.yaml"
-  defaultGladeFile="/usr/share/encfsgui/encfsgui.glade"
+  defaultConfigDir="/usr/share/encfsgui"
+
    
   # Setup argument parser
   parser = ArgumentParser(description=program_license,
@@ -375,16 +397,16 @@ if __name__ == "__main__":
                         action="store", 
                         help="location of the file that contains the cargos to be managed [default: %(default)s]")
   parser.add_argument("-g",
-                          "--gladeFile",
-                          default=defaultGladeFile,
-                          dest="gladeFile", 
+                          "--configDir",
+                          default=defaultConfigDir,
+                          dest="configDir", 
                           action="store",
-                          help="location of the graphical layout file (glade based) [default: %(default)s]")
+                          help="location of the app configuration directory [default: %(default)s]")
   
   # Process arguments
   args = parser.parse_args()
   cargoFile = args.cargoFile
-  gladeFile = args.gladeFile
+  gladeFile = args.configDir+encfsgui.GLADEFILENAME;
   debug = args.debug  
   FORMAT = '%(asctime)-15s -12s %(levelname)-8s %(message)s'
   formatter = logging.Formatter(FORMAT)
