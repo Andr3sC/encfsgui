@@ -38,8 +38,8 @@ from gettext import gettext as _
 
 __all__ = []
 __version__ = 0.1
-__date__ = '2020-05-17'
-__updated__ = '2020-05-17'
+__date__ = '2020-03-17'
+__updated__ = '2020-05-22'
 
 
 class encfsgui(object):
@@ -315,7 +315,7 @@ class encfsgui(object):
             self.activeMount.pop(row[1])
 
   def __init__(self, cargoFile, gladeFile):
-    self.cargoFile =cargoFile
+    self.cargoFile =os.path.realpath(cargoFile)
     
     self.activeMount = dict()
     self.readyCargos = dict()
@@ -375,7 +375,7 @@ if __name__ == "__main__":
 
   USAGE
   ''' % (program_shortdesc, str(__date__))
-  defaultCargoFile="~/.config/.encfsgui/encfsgui.yaml"
+  defaultCargoFile="{}/.config/encfsgui/{}".format(expanduser("~"),"encfsgui.yaml")
   defaultConfigDir="/usr/share/encfsgui"
 
    
