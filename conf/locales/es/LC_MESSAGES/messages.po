@@ -21,6 +21,15 @@ msgstr ""
 msgid "Changing state of {}"
 msgstr "Cambiando el estado de {}"
 
+msgid "status"
+msgstr "estado"
+
+msgid "Name"
+msgstr "Nombre"
+
+msgid "gtk-edit"
+msgstr "Editar"
+
 #: encfsgui.py:94
 msgid "Defining new Cargo"
 msgstr "Definiendo un nuevo almacén"

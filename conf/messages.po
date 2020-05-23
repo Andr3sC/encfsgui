@@ -1,0 +1,108 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2020-05-23 19:27+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: encfsgui.glade:21
+msgid "enfcfsgui"
+msgstr ""
+
+#: encfsgui.glade:47
+msgctxt "New Cargo"
+msgid "Define new Secret Cargo"
+msgstr ""
+
+#: encfsgui.glade:65
+msgid "Delete Secret Cargo"
+msgstr ""
+
+#: encfsgui.glade:82
+msgid "Edit Secret Cargo Mount"
+msgstr ""
+
+#: encfsgui.glade:99
+msgid "Connect to a Secrect Cargo"
+msgstr ""
+
+#: encfsgui.glade:116
+msgid "Disconnect Secret Cargo"
+msgstr ""
+
+#: encfsgui.glade:181
+msgid "Origin and Destiniation point for Secret Cargo"
+msgstr ""
+
+#: encfsgui.glade:192
+msgid "Secret Cargo Mounted"
+msgstr ""
+
+#: encfsgui.glade:206
+msgid "Name"
+msgstr ""
+
+#: encfsgui.glade:219 encfsgui.glade:450 encfsgui.glade:611
+msgid "Secret Cargo"
+msgstr ""
+
+#: encfsgui.glade:233
+msgid "Mount Point"
+msgstr ""
+
+#: encfsgui.glade:247
+msgctxt "messages"
+msgid "status"
+msgstr ""
+
+#: encfsgui.glade:292
+msgid "Launchig..."
+msgstr ""
+
+#: encfsgui.glade:394
+msgid "Delete entry?"
+msgstr ""
+
+#: encfsgui.glade:407
+msgid "Edit Cargo"
+msgstr ""
+
+#: encfsgui.glade:429 encfsgui.glade:590
+msgid "Cargo Name"
+msgstr ""
+
+#: encfsgui.glade:461 encfsgui.glade:622
+msgid "Mount point"
+msgstr ""
+
+#: encfsgui.glade:568
+msgid "Define new Cargo"
+msgstr ""
+
+#: encfsgui.glade:765
+msgid "Enter Password"
+msgstr ""
+
+#: encfsgui.glade:777
+msgid "provide password for mount"
+msgstr ""
+
+#: encfsgui.glade:781
+msgid "Enter password"
+msgstr ""
+
+#: encfsgui.glade:782
+msgid "enter password here"
+msgstr ""

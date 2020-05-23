@@ -24,6 +24,8 @@ import gi
 gi.require_version("Gtk", "3.0")  # @UndefinedVariable
 from gi.repository import Gtk  # @UnresolvedImport
 
+
+
 from os.path import expanduser
 
 from widgetHandlers.messageArea import messageArea
@@ -315,23 +317,26 @@ class encfsgui(object):
           if self.activeMount.has_key(row[1]):
             self.activeMount.pop(row[1])
 
-  def __init__(self, cargoFile, gladeFile):
+  def __init__(self, cargoFile, configDir):
     self.cargoFile =os.path.realpath(cargoFile)
+    gladeFile = configDir+encfsgui.GLADEFILENAME;
     
     self.activeMount = dict()
     self.readyCargos = dict()
     builder = Gtk.Builder()
+    builder.set_translation_domain("messages")
     builder.add_from_file(gladeFile)
+
+
     builder.connect_signals(self)
     
     self.activateButtons(builder)
     self.cargoList = builder.get_object("cargoList")
     
     renderer_pixbuf = Gtk.CellRendererPixbuf()
-    column_pixbuf = Gtk.TreeViewColumn("status", renderer_pixbuf, icon_name=4)
+    column_pixbuf = Gtk.TreeViewColumn(_("status"), renderer_pixbuf, icon_name=4)
     self.cargoList.remove_column(self.cargoList.get_column(4))
     self.cargoList.append_column(column_pixbuf)
-    
     
     self.cargoList.set_visible(True)    
     self.model = self.cargoList.get_model()
@@ -409,6 +414,10 @@ if __name__ == "__main__":
   cargoFile = args.cargoFile
   configDir = args.configDir
   dirLocale = configDir+"/locales"
+  import locale
+  locale.setlocale(locale.LC_ALL, '')
+  locale.bindtextdomain("messages", dirLocale)
+  
   try:
     myLang = gettext.translation('messages', localedir=dirLocale)#, languages=['es'])
     myLang.install()
@@ -418,7 +427,7 @@ if __name__ == "__main__":
     myLang.install()
     _=myLang.gettext    
   
-  gladeFile = configDir+encfsgui.GLADEFILENAME;
+  
   debug = args.debug  
   FORMAT = '%(asctime)-15s -12s %(levelname)-8s %(message)s'
   formatter = logging.Formatter(FORMAT)
@@ -432,5 +441,5 @@ if __name__ == "__main__":
   if ( debug ):
     logger.setLevel(logging.DEBUG)  
 
-  app = encfsgui(cargoFile,gladeFile)
+  app = encfsgui(cargoFile,configDir)
   Gtk.main()

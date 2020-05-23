@@ -21,6 +21,12 @@ msgstr ""
 msgid "Changing state of {}"
 msgstr "Changing state of {}"
 
+msgid "status"
+msgstr "estado"
+
+msgid "Name"
+msgstr "Name"
+
 #: encfsgui.py:94
 msgid "Defining new Cargo"
 msgstr "Defining new Cargo"
