@@ -1,0 +1,118 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# Andrés Cancer bugarnir@gmail.com, 2020.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2020-05-23 14:12+0200\n"
+"PO-Revision-Date: 2020-05-23 14:12+0200\n"
+"Last-Translator: Andrés Cancer bugarnir@gmail.com, 2020.\n"
+"Language-Team: es <bugarnir@gmail.com>\n"
+"Language: es\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: encfsgui.py:85
+msgid "Changing state of {}"
+msgstr "Cambiando el estado de {}"
+
+#: encfsgui.py:94
+msgid "Defining new Cargo"
+msgstr "Definiendo un nuevo almacén"
+
+#: encfsgui.py:102
+msgid "Deleting Cargo {}"
+msgstr "Borrando almacén {}"
+
+#: encfsgui.py:106
+msgid "Can not delete connected cargo! {}"
+msgstr "¡No se puede borrar un almacén conectado! {}"
+
+#: encfsgui.py:111
+msgid "Editing Cargo {}"
+msgstr "Editando almacén {}"
+
+#: encfsgui.py:118
+msgid "Can not edit connected cargo!! {}"
+msgstr "¡No se puede editar un almacén conectado! {}"
+
+#: encfsgui.py:127
+msgid "Connencting Cargo {}"
+msgstr "Conectando almacén {}"
+
+#: encfsgui.py:131
+msgid "Already connected!!! {}"
+msgstr "¡Ya conectado! {}"
+
+#: encfsgui.py:138
+msgid "Disconnecting Cargo {}"
+msgstr "Desconectando almacén {}"
+
+#: encfsgui.py:142
+msgid "Not connected!!! {}"
+msgstr "¡No conectado! {}"
+
+#: encfsgui.py:150
+msgid "Disconnected Cargo {}"
+msgstr "Almacén desconectado {}"
+
+#: encfsgui.py:154
+msgid "Row Selected "
+msgstr "Fil seleccionada "
+
+#: encfsgui.py:178
+msgid "Cargo mounted! {}"
+msgstr "¡Almacén conectado! {}"
+
+#: encfsgui.py:180
+msgid "Cannot mount! {}"
+msgstr "¡No se puede conectar! {}"
+
+#: encfsgui.py:185 encfsgui.py:194 encfsgui.py:263
+msgid "notChecked"
+msgstr "sinComprobar"
+
+#: encfsgui.py:188
+msgid "New cargo created! {}"
+msgstr "¡Nuevo almacén conectado! {}"
+
+#: encfsgui.py:196
+msgid "Edit cargo done! {}"
+msgstr "¡Ediciónn del almacén realizada! {}"
+
+#: encfsgui.py:202
+msgid "Edit Cargo canceled"
+msgstr "Edición de almacén cancelada"
+
+#: encfsgui.py:207
+msgid "Cargo Creation canceled"
+msgstr "Creación de almacén cancelada"
+
+#: encfsgui.py:212
+msgid "Delete Cargo canceled"
+msgstr "Eliminación de almacén cancelado"
+
+#: encfsgui.py:219
+msgid "Delete Cargo confirmed"
+msgstr "Eliminiación de almacén confirmada"
+
+#: encfsgui.py:297
+msgid "mounted"
+msgstr "conectado"
+
+#: encfsgui.py:304
+msgid "notReady"
+msgstr "sinCrear"
+
+#: encfsgui.py:311
+msgid "unmounted"
+msgstr "desconetado"
+
+#: encfsgui.py:354
+msgid "Launched"
+msgstr "En funcionamiento"

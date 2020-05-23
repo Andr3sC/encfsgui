@@ -33,7 +33,7 @@ import os
 from argparse import ArgumentParser
 from argparse import RawDescriptionHelpFormatter
 
-#import gettext
+import gettext
 from gettext import gettext as _
 
 __all__ = []
@@ -406,7 +406,12 @@ if __name__ == "__main__":
   # Process arguments
   args = parser.parse_args()
   cargoFile = args.cargoFile
-  gladeFile = args.configDir+encfsgui.GLADEFILENAME;
+  configDir = args.configDir
+  dirLocale = configDir+"/locales"
+  myLang = gettext.translation('messages', localedir=dirLocale)#, languages=['es'])
+  myLang.install()
+  _=myLang.gettext
+  gladeFile = configDir+encfsgui.GLADEFILENAME;
   debug = args.debug  
   FORMAT = '%(asctime)-15s -12s %(levelname)-8s %(message)s'
   formatter = logging.Formatter(FORMAT)
