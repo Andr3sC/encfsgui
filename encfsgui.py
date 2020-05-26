@@ -415,11 +415,11 @@ if __name__ == "__main__":
   configDir = args.configDir
   dirLocale = configDir+"/locales"
   import locale
-  locale.setlocale(locale.LC_ALL, '')
+  locale.setlocale(locale.LC_ALL)
   locale.bindtextdomain("messages", dirLocale)
   
   try:
-    myLang = gettext.translation('messages', localedir=dirLocale)#, languages=['es'])
+    myLang = gettext.translation('messages', localedir=dirLocale)#, languages=['es_ES.utf8'])
     myLang.install()
     _=myLang.gettext
   except:
