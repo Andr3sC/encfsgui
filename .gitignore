@@ -1,2 +1,4 @@
 *~
 *.mo
+debPackaging/target
+debPackaging/source
