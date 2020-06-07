@@ -161,17 +161,19 @@ class encfsgui(object):
   def passwordEntry_activate_cb(self, widget, data=None):
     clave=self.passwdDialogText.get_text()
     self.passwdDialog.hide()        
-    ##logging.debug("provided password[%s]", clave)
+    #logging.debug("provided password[%s]", clave)
     echoCmd = "echo"
     echoOut = subprocess.Popen([echoCmd,clave],
                                stdout=subprocess.PIPE)
-    encfsCmd =["encfs"]
+    #logging.debug("echo Command [{}]/[{}]".format(echoCmd,clave))
+    encfsCmd =["encfs", "--stdinpass"]
     if (not self.readyCargos.has_key(self.getSelectedName())):
       encfsCmd.append("--paranoia")
     encfsCmd.append(os.path.realpath(self.getSelectedOrigin()))
-    encfsCmd.append(os.path.realpath(self.getSelectedMount()))   
+    encfsCmd.append(os.path.realpath(self.getSelectedMount()))
+    logging.debug("encfs Command {}".format(encfsCmd))   
     encfsOut, encfsErr = subprocess.Popen(encfsCmd,            
-          stdin=echoOut.stdout,stderr=subprocess.PIPE).communicate()
+          stdin=echoOut.stdout,stderr=subprocess.PIPE, stdout=subprocess.PIPE).communicate()
     logging.debug("Enfcs Output {}".format(encfsOut))
     logging.debug("Enfcs ErrorOut {}".format(encfsErr))
     echoOut.stdout.close()
