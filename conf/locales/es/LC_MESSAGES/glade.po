@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-23 18:11+0200\n"
+"POT-Creation-Date: 2020-06-14 17:42+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,91 +17,100 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: encfsgui.glade:21
+#: encfsgui.glade:38
 msgid "enfcfsgui"
 msgstr ""
 
-#: encfsgui.glade:47
+#: encfsgui.glade:64
 msgctxt "New Cargo"
 msgid "Define new Secret Cargo"
 msgstr ""
 
-#: encfsgui.glade:65
+#: encfsgui.glade:82
 msgid "Delete Secret Cargo"
 msgstr ""
 
-#: encfsgui.glade:82
+#: encfsgui.glade:99
 msgid "Edit Secret Cargo Mount"
 msgstr ""
 
-#: encfsgui.glade:99
+#: encfsgui.glade:116
 msgid "Connect to a Secrect Cargo"
 msgstr ""
 
-#: encfsgui.glade:116
+#: encfsgui.glade:133
 msgid "Disconnect Secret Cargo"
 msgstr ""
 
-#: encfsgui.glade:181
+#: encfsgui.glade:198
 msgid "Origin and Destiniation point for Secret Cargo"
 msgstr ""
 
-#: encfsgui.glade:192
-msgid "Secret Cargo Mounted"
-msgstr ""
-
-#: encfsgui.glade:206
-msgid "Name"
-msgstr ""
-
-#: encfsgui.glade:219 encfsgui.glade:450 encfsgui.glade:611
-msgid "Secret Cargo"
-msgstr ""
-
-#: encfsgui.glade:233
-msgid "Mount Point"
-msgstr ""
-
-#: encfsgui.glade:247
+#: encfsgui.glade:209
 msgid "status"
 msgstr ""
 
-#: encfsgui.glade:292
+#: encfsgui.glade:223
+msgid "Name"
+msgstr ""
+
+#: encfsgui.glade:236 encfsgui.glade:467 encfsgui.glade:628
+msgid "Secret Cargo"
+msgstr ""
+
+#: encfsgui.glade:250
+msgid "Mount Point"
+msgstr ""
+
+#: encfsgui.glade:264
+msgctxt "messages"
+msgid "status"
+msgstr ""
+
+#: encfsgui.glade:309
 msgid "Launchig..."
 msgstr ""
 
-#: encfsgui.glade:394
+#: encfsgui.glade:411
 msgid "Delete entry?"
 msgstr ""
 
-#: encfsgui.glade:407
+#: encfsgui.glade:424
 msgid "Edit Cargo"
 msgstr ""
 
-#: encfsgui.glade:429 encfsgui.glade:590
+#: encfsgui.glade:446 encfsgui.glade:607
 msgid "Cargo Name"
 msgstr ""
 
-#: encfsgui.glade:461 encfsgui.glade:622
+#: encfsgui.glade:478 encfsgui.glade:639
 msgid "Mount point"
 msgstr ""
 
-#: encfsgui.glade:568
+#: encfsgui.glade:585
 msgid "Define new Cargo"
 msgstr ""
 
-#: encfsgui.glade:765
+#: encfsgui.glade:783
 msgid "Enter Password"
 msgstr ""
 
-#: encfsgui.glade:777
+#: encfsgui.glade:795 encfsgui.glade:864 encfsgui.glade:882
 msgid "provide password for mount"
 msgstr ""
 
-#: encfsgui.glade:781
+#: encfsgui.glade:799
 msgid "Enter password"
 msgstr ""
 
-#: encfsgui.glade:782
+#: encfsgui.glade:800 encfsgui.glade:868
 msgid "enter password here"
+msgstr ""
+
+#: encfsgui.glade:852
+msgid "Enter Password for new Cargo"
+msgstr ""
+
+#: encfsgui.glade:886
+msgid "confirm password here"
 msgstr ""

@@ -355,6 +355,7 @@ limitations under the License.
     <property name="skip_taskbar_hint">True</property>
     <property name="skip_pager_hint">True</property>
     <property name="deletable">False</property>
+    <signal name="destroy" handler="deleteCancel_clicked_cb" swapped="no"/>
     <child>
       <placeholder/>
     </child>
@@ -587,6 +588,7 @@ limitations under the License.
     <property name="modal">True</property>
     <property name="destroy_with_parent">True</property>
     <property name="urgency_hint">True</property>
+    <signal name="destroy" handler="cancelNew_clicked_cb" swapped="no"/>
     <child>
       <placeholder/>
     </child>
@@ -741,7 +743,7 @@ limitations under the License.
       </object>
     </child>
   </object>
-  <object class="GtkDialog" id="passwordDialog">
+  <object class="GtkDialog" id="passwordDialogMount">
     <property name="can_focus">False</property>
     <property name="resizable">False</property>
     <property name="modal">True</property>
@@ -750,6 +752,7 @@ limitations under the License.
     <property name="skip_taskbar_hint">True</property>
     <property name="skip_pager_hint">True</property>
     <property name="urgency_hint">True</property>
+    <signal name="destroy" handler="passwordDialogMount_close_cb" swapped="no"/>
     <child>
       <placeholder/>
     </child>
@@ -804,6 +807,92 @@ limitations under the License.
             <property name="expand">False</property>
             <property name="fill">True</property>
             <property name="position">1</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+  </object>
+  <object class="GtkDialog" id="passwordDialogNewCargo">
+    <property name="can_focus">False</property>
+    <property name="resizable">False</property>
+    <property name="modal">True</property>
+    <property name="destroy_with_parent">True</property>
+    <property name="type_hint">dialog</property>
+    <property name="skip_taskbar_hint">True</property>
+    <property name="skip_pager_hint">True</property>
+    <property name="urgency_hint">True</property>
+    <signal name="destroy" handler="passwordDialogNewCargo_close_cb" swapped="no"/>
+    <child>
+      <placeholder/>
+    </child>
+    <child internal-child="vbox">
+      <object class="GtkBox">
+        <property name="can_focus">False</property>
+        <property name="orientation">vertical</property>
+        <property name="spacing">2</property>
+        <child internal-child="action_area">
+          <object class="GtkButtonBox">
+            <property name="can_focus">False</property>
+            <property name="layout_style">end</property>
+            <child>
+              <placeholder/>
+            </child>
+            <child>
+              <placeholder/>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">False</property>
+            <property name="position">3</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkLabel" id="passwordLabelNew">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="label" translatable="yes">Enter Password for new Cargo</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkEntry" id="passwordEntryNewCargoFirst">
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="tooltip_text" translatable="yes">provide password for mount</property>
+            <property name="visibility">False</property>
+            <property name="invisible_char">•</property>
+            <property name="primary_icon_stock">gtk-dialog-authentication</property>
+            <property name="placeholder_text" translatable="yes">enter password here</property>
+            <property name="input_purpose">password</property>
+            <signal name="activate" handler="entryPasswordEntryNewCargoFirst" swapped="no"/>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkEntry" id="passwordEntryNewCargoSecond">
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="tooltip_text" translatable="yes">provide password for mount</property>
+            <property name="visibility">False</property>
+            <property name="invisible_char">•</property>
+            <property name="primary_icon_stock">gtk-dialog-authentication</property>
+            <property name="placeholder_text" translatable="yes">confirm password here</property>
+            <property name="input_purpose">password</property>
+            <signal name="activate" handler="entrypasswordEntryNewCargoSecond" swapped="no"/>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">2</property>
           </packing>
         </child>
       </object>

@@ -65,6 +65,8 @@ class encfsgui(object):
   def getSelectedColumn(self, column):
     # Get the TreeView selected row(s)
     selection = self.cargoList.get_selection()
+    if (selection == None):
+      return None
     # get_selected_rows() returns a tuple
     # The first element is a ListStore
     # The second element is a list of tree paths
@@ -82,8 +84,7 @@ class encfsgui(object):
     
   def on_window_destroy(self, widget, data=None):
     Gtk.main_quit()
-    return True
-  
+    return True  
   def on_cargoList_row_activated(self, widget, data=None, moreData=None ):
     self.messageArea.addInProgress(_("Changing state of {}").format(self.getSelectedName()))
     logging.debug("double click! on %s", self.getSelectedName())
@@ -104,6 +105,10 @@ class encfsgui(object):
   def deleteCargo_clicked_cb(self, widget, data=None):
     self.messageArea.addInProgress(_("Deleting Cargo {}").format(self.getSelectedName()))
     self.checkCargoState()
+    if ( self.getSelectedName() == None):
+      logging.debug("Must select a row to be deleted")
+      self.messageArea.addError(_("Select a cargo to delete"))
+      return
     if self.getSelectedName() in self.activeMount:
       logging.debug("Can not delete connected cargo!!")
       self.messageArea.addError(_("Can not delete connected cargo! {}").format(self.getSelectedName()));
@@ -116,6 +121,11 @@ class encfsgui(object):
     logging.debug(self.getSelectedName())
     logging.debug(self.getSelectedOrigin())
     logging.debug(self.getSelectedMount())
+    if ( self.getSelectedName() == None):
+      logging.debug("Must select a row to be edited")
+      self.messageArea.addError(_("Select a cargo to edit"))
+      return
+    
     if self.getSelectedName() in self.activeMount:
       logging.debug("Can not edit connected cargo!!")
       self.messageArea.addError(_("Can not edit connected cargo!! {}").format(self.getSelectedName()))
@@ -125,17 +135,37 @@ class encfsgui(object):
       self.editMountPointDir.set_filname(self.getSelectedMount())
       self.editCargoWindow.show_all()
     logging.debug("edit cliked!")
+    
+  def passwordDialogMount_close_cb(self, widget, data=None):
+    logging.debug("Mount aborted by user")
+    self.messageArea.addOK(_("Mount aborted by user"))
+
+
+  def passwordDialogNewCargo_close_cb(self, widget, data=None):
+    logging.debug("Define and Mount aborted by user")
+    self.messageArea.addOK(_("Define and mount aborted by user"))
+
+  def entryPasswordEntryNewCargoFirst(self, widget, data=None):
+    self.passwordEntryNewCargoSecond.grab_focus()
+        
 
   def connectCargo_clicked_cb(self, widget, data=None):
-    self.messageArea.addInProgress(_("Connencting Cargo {}").format(self.getSelectedName()))
     self.checkCargoState()
+    logging.debug("connect cliked! on %s", self.getSelectedName())    
     if self.getSelectedName() in self.activeMount:
       logging.debug("Already connected!!!")
       self.messageArea.addError(_("Already connected!!! {}").format(self.getSelectedName()))      
     else:
-      self.passwdDialogText.set_text("")
-      self.passwdDialog.show_all()        
-    logging.debug("connect cliked! on %s", self.getSelectedName())
+      if self.getSelectedName() in self.readyCargos:
+        self.messageArea.addInProgress(_("Connecting Cargo {}").format(self.getSelectedName()))        
+        self.passwdDialogText.set_text("")
+        self.passwdDialogMount.show_all()        
+      else:
+        self.messageArea.addInProgress(_("Initializing and Connecting new Cargo {}").format(self.getSelectedName()))        
+        self.passwordEntryNewCargoFirst.set_text("")
+        self.passwordEntryNewCargoSecond.set_text("")
+        self.passwdDialogNewCargo.show_all()
+               
     
   def disconnectCargo_clicked_cb(self, widget, data=None):
     self.messageArea.addInProgress(_("Disconnecting Cargo {}").format(self.getSelectedName()))
@@ -158,31 +188,47 @@ class encfsgui(object):
     self.checkCargoState()
     logging.debug("list selected!")
     
-  def passwordEntry_activate_cb(self, widget, data=None):
-    clave=self.passwdDialogText.get_text()
-    self.passwdDialog.hide()        
+
+  def doMountNewCargo(self, clave):
     #logging.debug("provided password[%s]", clave)
     echoCmd = "echo"
-    echoOut = subprocess.Popen([echoCmd,clave],
-                               stdout=subprocess.PIPE)
-    #logging.debug("echo Command [{}]/[{}]".format(echoCmd,clave))
-    encfsCmd =["encfs", "--stdinpass"]
+    echoOut = subprocess.Popen([echoCmd, clave], stdout=subprocess.PIPE)
+  #logging.debug("echo Command [{}]/[{}]".format(echoCmd,clave))
+    encfsCmd = ["encfs", "--stdinpass"]
     if (not self.readyCargos.has_key(self.getSelectedName())):
       encfsCmd.append("--paranoia")
     encfsCmd.append(os.path.realpath(self.getSelectedOrigin()))
     encfsCmd.append(os.path.realpath(self.getSelectedMount()))
-    logging.debug("encfs Command {}".format(encfsCmd))   
-    encfsOut, encfsErr = subprocess.Popen(encfsCmd,            
-          stdin=echoOut.stdout,stderr=subprocess.PIPE, stdout=subprocess.PIPE).communicate()
+    logging.debug("encfs Command {}".format(encfsCmd))
+    encfsOut, encfsErr = subprocess.Popen(encfsCmd, stdin=echoOut.stdout, stderr=subprocess.PIPE, stdout=subprocess.PIPE).communicate()
     logging.debug("Enfcs Output {}".format(encfsOut))
     logging.debug("Enfcs ErrorOut {}".format(encfsErr))
     echoOut.stdout.close()
     self.checkCargoState()
-    self.passwdDialogText.set_text("")
-    if ( self.activeMount.has_key(self.getSelectedName())):
+    if (self.activeMount.has_key(self.getSelectedName())):
       self.messageArea.addOK(_("Cargo mounted! {}").format(self.getSelectedName()))
-    else:    
+    else:
       self.messageArea.addError(_("Cannot mount! {}").format(self.getSelectedName()))
+      
+  def entrypasswordEntryNewCargoSecond(self, widget, data=None):
+    clave1st=self.passwordEntryNewCargoFirst.get_text()
+    clave2nd=self.passwordEntryNewCargoSecond.get_text()
+    self.passwdDialogNewCargo.hide()
+    self.passwordEntryNewCargoFirst.set_text("")
+    self.passwordEntryNewCargoSecond.set_text("")
+    if ( clave1st == clave2nd ):
+      self.doMountNewCargo(clave1st)
+    else:
+      logging.debug("Passwords do not match")
+      self.messageArea.addError(_("Passwords do not match mounted aborted"))
+    
+    
+
+  def passwordEntry_activate_cb(self, widget, data=None):
+    clave=self.passwdDialogText.get_text()
+    self.passwdDialogMount.hide()        
+    self.passwdDialogText.set_text("")    
+    self.doMountNewCargo(clave)
     
   def addNew_clicked_cb(self, widget, data=None):
     logging.debug("Name [%s] SCD[%s] MPD[%s]", self.newName.get_text(), self.newSecretCargoDir.get_filename(), self.newMountPointDir.get_filename())
@@ -343,8 +389,11 @@ class encfsgui(object):
     self.cargoList.set_visible(True)    
     self.model = self.cargoList.get_model()
     self.window = builder.get_object("window")
-    self.passwdDialog = builder.get_object("passwordDialog")
-    self.passwdDialogText = builder.get_object("passwordEntry")
+    self.passwdDialogMount = builder.get_object("passwordDialogMount")
+    self.passwdDialogText = builder.get_object("passwordEntry")    
+    self.passwdDialogNewCargo= builder.get_object("passwordDialogNewCargo")    
+    self.passwordEntryNewCargoFirst = builder.get_object("passwordEntryNewCargoFirst")
+    self.passwordEntryNewCargoSecond= builder.get_object("passwordEntryNewCargoSecond")    
     self.lastPassword = ""
     self.newCargoWindow = builder.get_object("newCargoWindow")
     self.newName = builder.get_object("newCargoName")              
